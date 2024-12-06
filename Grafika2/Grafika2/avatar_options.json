@@ -1,0 +1,8 @@
+{
+  "hairStyles": [ "Short", "Long", "Curly", "Straight" ],
+  "hairColors": [ "#000000", "#8B4513", "#FFD700", "#FFFFFF" ],
+  "eyeColors": [ "#0000FF", "#008000", "#A52A2A", "#FFFFFF" ],
+  "skinColors": [ "#FFE4C4", "#D2B48C", "#8B4513" ],
+  "outfitStyles": [ "Casual", "Formal", "Sporty" ],
+  "outfitColors": [ "#000000", "#FFFFFF", "#FF0000", "#0000FF" ]
+}
