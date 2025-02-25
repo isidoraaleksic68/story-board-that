@@ -21,6 +21,8 @@ private:
     GLuint dressTexture;
     GLuint tshirtTexture;
     GLuint pantsTexture;
+    GLuint studentTexture;
+    GLuint hairTexture;
 
 public:
     Avatar();
@@ -57,7 +59,8 @@ public:
     void setDressTexture(GLuint textureID);
     void setTshirtTexture(GLuint textureID);
     void setPantsTexture(GLuint textureID);
-
+    void setHairTexture(GLuint textureID);
+    void drawStudent(Shader& shader);
 };
 
 #endif // AVATAR_H

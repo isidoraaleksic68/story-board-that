@@ -6,7 +6,7 @@
 
 Menu::Menu(Shader& shader, Shader& textureShader, Avatar& avatar)
     : shader(shader), textureShader(textureShader), avatar(avatar), selectedOption(-1) {
-    menuOptions = { "Eyes", "Lips", "Nose", "T-shirts", "Pants", "Dresses" };
+    menuOptions = { "Eyes", "Lips", "Nose", "T-shirts", "Pants", "Hair"};
     setupMenuVertices();
 }
 
@@ -142,10 +142,8 @@ void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int w
                 else if (menuOptions[i] == "Nose") {
                     avatar.setNoseTexture(textureID);
                 }
-                else if (menuOptions[i] == "Dresses") {
-                    avatar.setTshirtTexture(0);
-                    avatar.setPantsTexture(0);
-                    avatar.setDressTexture(textureID);
+                else if (menuOptions[i] == "Hair") {
+                    avatar.setHairTexture(textureID);
                 }
                 else if (menuOptions[i] == "T-shirts") {
                     avatar.setDressTexture(0);

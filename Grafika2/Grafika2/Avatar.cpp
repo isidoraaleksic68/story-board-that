@@ -22,6 +22,7 @@ Avatar::Avatar() {
     dressTexture = 0;
     tshirtTexture = 0;
     pantsTexture = 0;
+    studentTexture = loadTexture("student.png");
 }
 
 void Avatar::draw(Shader& shader, Shader& hairShader, float windowWidth, float windowHeight, float scrollOffset) {
@@ -797,7 +798,6 @@ void Avatar::drawMouth(Shader& shader) {
 
 
 void Avatar::drawHair(Shader& shader) {
-    static GLuint hairTexture = 0;
     if (hairTexture == 0) {
         hairTexture = loadTexture("hair/hair13.png");
     }
@@ -1141,4 +1141,70 @@ void Avatar::setTshirtTexture(GLuint textureID) {
 
 void Avatar::setPantsTexture(GLuint textureID) {
     pantsTexture = textureID;
+}
+
+void Avatar::setHairTexture(GLuint textureID) {
+    hairTexture = textureID;
+}
+
+
+void Avatar::drawStudent(Shader& shader) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    float hairWidth = 0.1f;
+    float hairHeight = 0.3f;
+    float hairCenterX = 0.5f;
+    float hairCenterY = 0.5f;
+
+    float vertices[] = {
+    -1.0f,  0.9f,       0.0f,  0.0f, // Donji levi ugao
+    -0.5f,  0.9f,       1.0f,  0.0f, // Donji desni ugao
+    -1.0f,  1.0f,       0.0f,  1.0f, // Gornji levi ugao
+    -0.5f,  1.0f,       1.0f,  1.0f  // Gornji desni ugao
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2, // Prvi trougao
+        1, 3, 2  // Drugi trougao
+    };
+
+
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    shader.use();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, studentTexture);
+    shader.setInt("texture1", 0);
+
+    // Draw the hair
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    // Cleanup
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
+
+    glDisable(GL_BLEND);
 }
