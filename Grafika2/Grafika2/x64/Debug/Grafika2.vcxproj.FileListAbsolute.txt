@@ -1,0 +1,2 @@
+C:\Users\isido\source\repos\Grafika2\x64\Debug\glew32.dll
+C:\Users\isido\Documents\story-board-that\Grafika2\x64\Debug\glew32.dll

@@ -6,17 +6,6 @@
 #include <thread> 
 #include <chrono>  
 
-float scrollOffset = 0.0f;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    scrollOffset += yoffset * 0.1f;
-    if (scrollOffset < 0.1f) scrollOffset = 0.1f;
-    if (scrollOffset > 2.0f) scrollOffset = 2.0f;
-}
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -36,7 +25,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 int main() {
     if (!glfwInit()) return -1;
 
-    GLFWwindow* window = glfwCreateWindow(1200, 1000, "Avatar Renderer", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1200, 1000, "Storyboard that", nullptr, nullptr);
+    glfwMaximizeWindow(window);
+
     if (!window) {
         glfwTerminate();
         return -1;
@@ -44,10 +35,6 @@ int main() {
 
     glfwMakeContextCurrent(window);
     glewInit();
-
-    glViewport(0, 0, 1200, 1000);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetScrollCallback(window, scroll_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     Shader avatarShader("vertex.vert", "fragment.frag");
@@ -66,18 +53,18 @@ int main() {
         avatarShader.use();
         hairShader.use();
 
-        avatar.draw(avatarShader, hairShader, 1200, 1000, scrollOffset);
+        avatar.draw(avatarShader, hairShader, 1200, 1000);
 
         float color[] = { 1.0, 0.1, 0.1 };
 
 
-        avatar.drawDress(avatarShader, hairShader, color, "ts");
-        avatar.drawPants(avatarShader, hairShader, color, "ts");
-        avatar.drawTshirt(avatarShader, hairShader, color, "ts");
-        avatar.drawFace(hairShader);
-        avatar.drawStudent(hairShader);
+        //avatar.drawDress(avatarShader, hairShader, color, "ts");
+        //avatar.drawPants(avatarShader, hairShader, color, "ts");
+        //avatar.drawTshirt(avatarShader, hairShader, color, "ts");
+        //avatar.drawFace(hairShader);
+        //avatar.drawStudent(hairShader);
 
-        menu.render(-0.95f, 0.8f, 0.4f, 0.05f);
+        //menu.render(-0.95f, 0.8f, 0.4f, 0.05f);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
