@@ -135,15 +135,14 @@
   <ItemGroup>
     <None Include="avatar_options.json" />
     <None Include="fragment.frag" />
-    <None Include="hairFragment.frag" />
-    <None Include="hairVertex.vert" />
-    <None Include="menuFragment.frag" />
-    <None Include="menuVertex.vert" />
+    <None Include="textureFragment.frag" />
+    <None Include="textureVertex.vert" />
     <None Include="packages.config" />
     <None Include="vertex.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
@@ -151,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>

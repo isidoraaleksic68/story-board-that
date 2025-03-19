@@ -1,5 +1,5 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef MAIN_MENU_H
+#define MAIN_MENU_H
 
 #include <vector>
 #include <string>
@@ -7,12 +7,12 @@
 #include "Avatar.h"
 #include <unordered_map>
 
-class Menu {
+class MainMenu {
 public:
-    Menu(Shader& avatarShader, Shader& textureShader, Avatar& avatar);
-    ~Menu();
+    MainMenu(Shader& avatarShader, Shader& textureShader, Avatar& avatar);
+    ~MainMenu();
 
-    void render(float x, float y, float width, float height);
+    void render(float x, float y, float width, float height,int windowWidth, int windowHeight);
     void handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight);
 
 private:
@@ -26,8 +26,8 @@ private:
     GLuint menuVAO, menuVBO;
 
     void renderButton(float x, float y, float width, float height, bool isSelected, std::string selectedOption);
-    void renderImagesInLipsContainer(const std::string& folderPath);
-    std::string getNextFile(const std::string& folderPath);
+   // void renderImagesInLipsContainer(const std::string& folderPath);
+    //std::string getNextFile(const std::string& folderPath);
 };
 
 #endif

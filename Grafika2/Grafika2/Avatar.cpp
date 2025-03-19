@@ -85,7 +85,7 @@ void Avatar::drawHead(Shader& shader, float color[]) {
         float y = b * sin(angle);
 
         // Center the head at (0, 0)
-        vertices[i * 6] = x + 0.5f; // X = 0.5f
+        vertices[i * 6] = x; // X = 0.5f
         vertices[i * 6 + 1] = y + 0.48f; // Centered on Y = 0.48 (adjust for more space if needed)
         vertices[i * 6 + 2] = color[0]; // R (Red)
         vertices[i * 6 + 3] = color[1]; // G (Green)
@@ -127,10 +127,10 @@ void Avatar::drawNeck(Shader& shader, float color[]) {
 
     float vertices[] = {
         // X, Y, R, G, B, A
-        -width / 2.0f + 0.5f, neckBaseY, color[0], color[1], color[2], 2.0f, // left bottom
-         width / 2.0f + 0.5f, neckBaseY, color[0], color[1], color[2], 2.0f, // right bottom
-         width / 2.0f + 0.5f, neckBaseY + height, color[0], color[1], color[2], 2.0f, // right top
-        -width / 2.0f + 0.5f, neckBaseY + height, color[0], color[1], color[2], 2.0f  // left top
+        -width / 2.0f , neckBaseY, color[0], color[1], color[2], 2.0f, // left bottom
+         width / 2.0f , neckBaseY, color[0], color[1], color[2], 2.0f, // right bottom
+         width / 2.0f , neckBaseY + height, color[0], color[1], color[2], 2.0f, // right top
+        -width / 2.0f , neckBaseY + height, color[0], color[1], color[2], 2.0f  // left top
     };
 
     unsigned int indices[] = {
@@ -170,32 +170,32 @@ void Avatar::drawTorso(Shader& shader, float color[]) {
     float vertices[] = {
         // Position (x, y)    | Color (r, g, b, a)
         // left shoulder curve
-        -0.18f + 0.5f,  0.22f,  color[0], color[1], color[2], 1.0f,
-        -0.14f + 0.5f,  0.26f,  color[0], color[1], color[2], 1.0f,
-        -0.08f + 0.5f,  0.28f,  color[0], color[1], color[2], 1.0f,
-        -0.01f + 0.5f,  0.29f,  color[0], color[1], color[2], 1.0f,
+        -0.18f ,  0.22f,  color[0], color[1], color[2], 1.0f,
+        -0.14f ,  0.26f,  color[0], color[1], color[2], 1.0f,
+        -0.08f ,  0.28f,  color[0], color[1], color[2], 1.0f,
+        -0.01f ,  0.29f,  color[0], color[1], color[2], 1.0f,
 
         // right shoulder curve
-         0.01f + 0.5f,  0.29f,  color[0], color[1], color[2], 1.0f,
-         0.08f + 0.5f,  0.28f,  color[0], color[1], color[2], 1.0f,
-         0.14f + 0.5f,  0.26f,  color[0], color[1], color[2], 1.0f,
-         0.18f + 0.5f,  0.22f,  color[0], color[1], color[2], 1.0f,
+         0.01f ,  0.29f,  color[0], color[1], color[2], 1.0f,
+         0.08f ,  0.28f,  color[0], color[1], color[2], 1.0f,
+         0.14f ,  0.26f,  color[0], color[1], color[2], 1.0f,
+         0.18f ,  0.22f,  color[0], color[1], color[2], 1.0f,
 
          // upper torso
-         -0.14f + 0.5f,  0.18f,  color[0], color[1], color[2], 1.0f,
-          0.14f + 0.5f,  0.18f,  color[0], color[1], color[2], 1.0f,
+         -0.14f ,  0.18f,  color[0], color[1], color[2], 1.0f,
+          0.14f ,  0.18f,  color[0], color[1], color[2], 1.0f,
 
           // middle torso
-          -0.1f + 0.5f, -0.08f,  color[0], color[1], color[2], 1.0f,
-           0.1f + 0.5f, -0.08f,  color[0], color[1], color[2], 1.0f,
+          -0.1f , -0.08f,  color[0], color[1], color[2], 1.0f,
+           0.1f , -0.08f,  color[0], color[1], color[2], 1.0f,
 
            // waist
-           -0.12f + 0.5f, -0.16f,  color[0], color[1], color[2], 1.0f,
-            0.12f + 0.5f, -0.16f,  color[0], color[1], color[2], 1.0f,
+           -0.12f , -0.16f,  color[0], color[1], color[2], 1.0f,
+            0.12f , -0.16f,  color[0], color[1], color[2], 1.0f,
 
             // bottom torso
-            -0.14f + 0.5f, -0.3f,   color[0], color[1], color[2], 1.0f,
-             0.14f + 0.5f, -0.3f,   color[0], color[1], color[2], 1.0f,
+            -0.14f , -0.3f,   color[0], color[1], color[2], 1.0f,
+             0.14f , -0.3f,   color[0], color[1], color[2], 1.0f,
     };
 
     unsigned int indices[] = {
@@ -534,7 +534,7 @@ void Avatar::drawArms(Shader& shader, Shader& textureShader, float color[]) {
     float lowerArmWidth = 0.065f;   
 
     // left arm
-    float leftShoulderX = 0.32f; // x-coordinate for left shoulder
+    float leftShoulderX = -0.18f; // x-coordinate for left shoulder
     float leftElbowX = leftShoulderX - upperArmLength * cos(M_PI / 2.4);
     float leftElbowY = shoulderY - upperArmLength * sin(M_PI / 2.4);
 
@@ -561,7 +561,7 @@ void Avatar::drawArms(Shader& shader, Shader& textureShader, float color[]) {
     drawRectangle(shader, leftLowerArmVertices, indices, 6);
 
     // right arm (mirrored along Y-axis)
-    float rightShoulderX = 0.68f;
+    float rightShoulderX = 0.18f;
     float rightElbowX = rightShoulderX + upperArmLength * cos(M_PI / 2.4);
     float rightElbowY = shoulderY - upperArmLength * sin(M_PI / 2.4);
 
@@ -650,10 +650,10 @@ void Avatar::drawLegs(Shader& shader, Shader& textureShader, float color[]) {
 
     // left upper leg (trapezoid)
     float leftUpperLegVertices[] = {
-        leftLegCenterX - legWidthTop / 2.0f + 0.5f, torsoBottomY, color[0], color[1], color[2], 1.0f, // top left
-        leftLegCenterX + legWidthTop / 2.0f + 0.5f, torsoBottomY, color[0], color[1], color[2], 1.0f, // top right
-        leftLegCenterX + legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f, // bottom right
-        leftLegCenterX - legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f  // bottom left
+        leftLegCenterX - legWidthTop / 2.0f , torsoBottomY, color[0], color[1], color[2], 1.0f, // top left
+        leftLegCenterX + legWidthTop / 2.0f , torsoBottomY, color[0], color[1], color[2], 1.0f, // top right
+        leftLegCenterX + legWidthBottom / 2.0f , upperLegBottomY, color[0], color[1], color[2], 1.0f, // bottom right
+        leftLegCenterX - legWidthBottom / 2.0f , upperLegBottomY, color[0], color[1], color[2], 1.0f  // bottom left
     };
 
     unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
@@ -661,44 +661,44 @@ void Avatar::drawLegs(Shader& shader, Shader& textureShader, float color[]) {
     drawRectangle(shader, leftUpperLegVertices, indices, 6);
 
     // left knee (ellipse)
-    drawEllipse(shader, leftLegCenterX + 0.5f, upperLegBottomY, kneeRadiusX, kneeRadiusY, color);
+    drawEllipse(shader, leftLegCenterX , upperLegBottomY, kneeRadiusX, kneeRadiusY, color);
 
     // left lower leg (tapered trapezoid)
     float leftLowerLegVertices[] = {
-        leftLegCenterX - legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f, // top left
-        leftLegCenterX + legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f, // top right
-        leftLegCenterX + legWidthFoot / 2.0f + 0.5f, lowerLegBottomY, color[0], color[1], color[2], 1.0f, // bottom right (narrower)
-        leftLegCenterX - legWidthFoot / 2.0f + 0.5f, lowerLegBottomY, color[0], color[1], color[2], 1.0f  // bottom left (narrower)
+        leftLegCenterX - legWidthBottom / 2.0f, upperLegBottomY, color[0], color[1], color[2], 1.0f, // top left
+        leftLegCenterX + legWidthBottom / 2.0f, upperLegBottomY, color[0], color[1], color[2], 1.0f, // top right
+        leftLegCenterX + legWidthFoot / 2.0f, lowerLegBottomY, color[0], color[1], color[2], 1.0f, // bottom right (narrower)
+        leftLegCenterX - legWidthFoot / 2.0f, lowerLegBottomY, color[0], color[1], color[2], 1.0f  // bottom left (narrower)
     };
 
     drawRectangle(shader, leftLowerLegVertices, indices, 6);
 
     // right upper leg (trapezoid)
     float rightUpperLegVertices[] = {
-        rightLegCenterX - legWidthTop / 2.0f + 0.5f, torsoBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX + legWidthTop / 2.0f + 0.5f, torsoBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX + legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX - legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f
+        rightLegCenterX - legWidthTop / 2.0f, torsoBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX + legWidthTop / 2.0f, torsoBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX + legWidthBottom / 2.0f, upperLegBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX - legWidthBottom / 2.0f, upperLegBottomY, color[0], color[1], color[2], 1.0f
     };
 
     drawRectangle(shader, rightUpperLegVertices, indices, 6);
 
     // right knee (ellipse)
-    drawEllipse(shader, rightLegCenterX + 0.5f, upperLegBottomY, kneeRadiusX, kneeRadiusY, color);
+    drawEllipse(shader, rightLegCenterX, upperLegBottomY, kneeRadiusX, kneeRadiusY, color);
 
     // right lower leg (tapered trapezoid)
     float rightLowerLegVertices[] = {
-        rightLegCenterX - legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX + legWidthBottom / 2.0f + 0.5f, upperLegBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX + legWidthFoot / 2.0f + 0.5f, lowerLegBottomY, color[0], color[1], color[2], 1.0f,
-        rightLegCenterX - legWidthFoot / 2.0f + 0.5f, lowerLegBottomY, color[0], color[1], color[2], 1.0f
+        rightLegCenterX - legWidthBottom / 2.0f , upperLegBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX + legWidthBottom / 2.0f , upperLegBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX + legWidthFoot / 2.0f , lowerLegBottomY, color[0], color[1], color[2], 1.0f,
+        rightLegCenterX - legWidthFoot / 2.0f, lowerLegBottomY, color[0], color[1], color[2], 1.0f
     };
 
     drawRectangle(shader, rightLowerLegVertices, indices, 6);
 
-    float rightLegX = rightLegCenterX + legWidthFoot / 2.0f + 0.5f;
+    float rightLegX = rightLegCenterX + legWidthFoot / 2.0f ;
     float rightLegY = lowerLegBottomY;
-    float leftLegX = leftLegCenterX - legWidthFoot / 2.0f + 0.5f;
+    float leftLegX = leftLegCenterX - legWidthFoot / 2.0f ;
     float leftLegY = lowerLegBottomY;
 
     drawRightFoot(textureShader, rightLegX, rightLegY);
