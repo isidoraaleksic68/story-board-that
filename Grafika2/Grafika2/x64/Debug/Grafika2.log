@@ -1,6 +1,8 @@
-﻿  MainMenu.cpp
-C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\MainMenu.cpp(98,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\MainMenu.cpp(99,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  main.cpp
-  Generating Code...
+﻿  Slides.cpp
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(77,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(90,31): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(475,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(476,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(502,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\Slides.cpp(511,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Grafika2.vcxproj -> C:\Users\isido\Documents\story-board-that\Grafika2\x64\Debug\Grafika2.exe

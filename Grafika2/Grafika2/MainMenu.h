@@ -14,6 +14,7 @@ public:
 
     void render(float x, float y, float width, float height,int windowWidth, int windowHeight);
     void handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight);
+    void renderMainMenuBackground();
 
 private:
     Shader& shader;

@@ -4,24 +4,32 @@
 #include "Avatar.h"
 #include "Menu.h"
 #include "MainMenu.h"
+#include "Slides.h"
 #include <thread> 
 #include <chrono>
 #include "stb_image.h"
 #include <iostream>
 
-// Initial window size (used for coordinate normalization)
+// Initial window size
 const int initialWindowWidth = 1200;
-const int initialWindowHeight = 1000;
+const int initialWindowHeight = 900;
 int windowWidth = initialWindowWidth;
 int windowHeight = initialWindowHeight;
 
+// Struct to store MainMenu and Slides pointers
+struct AppState {
+    MainMenu* mainMenu;
+    Slides* slides;
+};
+
+// Callback for window resizing
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
     windowWidth = width;
     windowHeight = height;
 }
 
-// Universal Mouse Click Callback
+// Mouse click callback
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double mouseX, mouseY;
@@ -31,9 +39,15 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         double normalizedX = (mouseX / windowWidth) * initialWindowWidth;
         double normalizedY = (mouseY / windowHeight) * initialWindowHeight;
 
-        MainMenu* mainMenu = (MainMenu*)glfwGetWindowUserPointer(window);
-        if (mainMenu) {
-            mainMenu->handleMouseClick(normalizedX, normalizedY, initialWindowWidth, initialWindowHeight);
+        AppState* state = (AppState*)glfwGetWindowUserPointer(window);
+        if (!state) return;
+
+        if (state->mainMenu) {
+            state->mainMenu->handleMouseClick(normalizedX, normalizedY, initialWindowWidth, initialWindowHeight);
+        }
+
+        if (state->slides) {
+            state->slides->handleMouseClick(normalizedX, normalizedY, initialWindowWidth, initialWindowHeight);
         }
     }
 }
@@ -62,8 +76,7 @@ int main() {
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Storyboard that", nullptr, nullptr);
-
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Storyboard That", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return -1;
@@ -81,11 +94,15 @@ int main() {
 
     Shader avatarShader("vertex.vert", "fragment.frag");
     Shader textureShader("textureVertex.vert", "textureFragment.frag");
+    Shader slidesShader("slides.vert", "fragment.frag");
 
     Avatar avatar;
     MainMenu mainMenu(avatarShader, textureShader, avatar);
+    Slides slides(slidesShader, avatarShader, textureShader);
 
-    glfwSetWindowUserPointer(window, &mainMenu);
+    // Store both objects in AppState
+    AppState appState = { &mainMenu, &slides };
+    glfwSetWindowUserPointer(window, &appState);
 
     glfwShowWindow(window);
 
@@ -101,9 +118,15 @@ int main() {
         avatarShader.use();
         textureShader.use();
 
-        // Pass the fixed initial window dimensions to maintain button visibility and size
-        mainMenu.render(-1.0f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
-        avatar.draw(avatarShader, textureShader, initialWindowWidth, initialWindowHeight);
+        // Render menu buttons
+        mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
+
+        // Render slides system
+        slides.renderSlidesBackground();
+        slides.render(windowWidth, windowHeight);
+
+
+        //avatar.draw(avatarShader, textureShader, windowWidth, windowHeight);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
