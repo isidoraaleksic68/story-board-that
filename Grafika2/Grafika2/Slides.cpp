@@ -77,29 +77,26 @@ std::vector<Slides::Slide> Slides::getActiveSlides() {
     int slideCount = slides.size();
     int devidedTo5 = slideCount % 5;
 
-        activeSlides.push_back(slides[0]);
-        activeSlides.push_back(slides[1]);
+    activeSlides.push_back(slides[0]);
+    activeSlides.push_back(slides[1]);
 
     int startIndex = (currentSlidesPage - 1) * 5; // Calculate the starting index
     int endIndex = startIndex + 5; // Get up to 5 slides per page
 
-    std::cout << "Slides count: " << slides.size() << std::endl;
+    //std::cout << "Slides count: " << slides.size() << std::endl;
 
-    // Ensure endIndex does not exceed the number of slides
     if (endIndex > slides.size()) {
         endIndex = slides.size();
     }
 
-    // Iterate through the slides vector and add the active slides
     for (int i = startIndex; i < endIndex; ++i) {
-        if (i == 0 || i == 1) {
+        if (i % 5 == 0 || i % 5 == 1) {
             continue;
         }
         activeSlides.push_back(slides[i]);
     }
 
-
-    std::cout << "Active slides count: " << activeSlides.size() << std::endl;
+    //std::cout << "Active slides count: " << activeSlides.size() << std::endl;
 
     return activeSlides;
 }
@@ -407,10 +404,8 @@ void Slides::setupBuffers(Slide& slide) {
 
 int Slides::calculateTotalPages() {
     int totalSlides = getSlidesCount();
-    //std::cout << "Total slides: " << totalSlides << std::endl;
     int totalPages = totalSlides / 5;
     totalSlidesPage = totalPages + 1;
-    //std::cout << "Total pages: " << totalSlidesPage << std::endl;
     return totalSlidesPage;
 };
 
@@ -431,13 +426,14 @@ int Slides::getSlidesCount() {
 
 void Slides::render(int windowWidth, int windowHeight) {
     int totalPages = calculateTotalPages();
+    //std::cout << "Total pages: " << totalPages << std::endl;
     std::vector<Slide> activeSlides = getActiveSlides();
 
-    if (totalPages > 1) {
+    if (currentSlidesPage < totalPages) {
         renderNextButton(-0.8f, -0.85f, 0.1f, 0.15f);
     }
 
-    if (currentSlidesPage > 1 && totalPages > 1) {
+    if (currentSlidesPage > 1) {
         renderPreviousButton(-0.9f, -0.85f, 0.1f, 0.15f);
     }
     
@@ -474,9 +470,10 @@ void Slides::handleMouseClick(double mouseX, double mouseY, int windowWidth, int
     float normalizedX = (mouseX / windowWidth) * 2.0f - 1.0f;
     float normalizedY = 1.0f - (mouseY / windowHeight) * 2.0f;
     std::vector<Slide> activeSlides = getActiveSlides();
+    int totalPages = calculateTotalPages();
 
     //next button detection -0.8f, -0.85f, 0.1f, 0.15f
-    if (slides.size() >= 5) {
+    if (currentSlidesPage < totalPages) {
         if (normalizedX >= -0.8f - 0.1f / 2 && normalizedX <= -0.8f + 0.1f / 2 &&
             normalizedY >= -0.85f - 0.15 / 2 && normalizedY <= -0.85f + 0.15f / 2) {
             std::cout << "Next slides!\n";
@@ -484,8 +481,13 @@ void Slides::handleMouseClick(double mouseX, double mouseY, int windowWidth, int
         }
     }
     
-
-    //previous button detection
+    if (currentSlidesPage > 1) {
+        if (normalizedX >= -0.9f - 0.1f / 2 && normalizedX <= -0.9f + 0.1f / 2 &&
+            normalizedY >= -0.85f - 0.15 / 2 && normalizedY <= -0.85f + 0.15f / 2) {
+            std::cout << "Previous slides!\n";
+            currentSlidesPage -= 1;
+        }
+    }
 
     for (size_t i = 0; i < activeSlides.size(); i++) {
         Slide& slide = activeSlides[i];
@@ -510,7 +512,7 @@ void Slides::addSlide() {
     int slideCount = activeSlides.size(); // Exclude the "Add Slide" button from count
     int devidedTo5 = slideCount % 5;
 
-    std::cout << "Active slides count from add slide function: " << slideCount << std::endl;
+   // std::cout << "Active slides count from add slide function: " << slideCount << std::endl;
 
     if (devidedTo5 == 0) {
         currentSlidesPage += 1;
