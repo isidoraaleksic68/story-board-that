@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "Menu.h"
 #include <iostream>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -7,7 +7,6 @@
 Menu::Menu(Shader& shader, Shader& textureShader, Avatar& avatar)
     : shader(shader), textureShader(textureShader), avatar(avatar), selectedOption(-1) {
     menuOptions = { "Eyes", "Lips", "Nose", "T-shirts", "Pants", "Hair"};
-    setupMenuVertices();
 }
 
 Menu::~Menu() {
@@ -15,33 +14,6 @@ Menu::~Menu() {
     glDeleteBuffers(1, &menuVBO);
 }
 
-void Menu::setupMenuVertices() {
-    float vertices[] = {
-         0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-         0.5f,  -1.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-         1.0f,  -1.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-         0.5f,  1.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-         1.0f,  -1.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-         1.0f,  1.0f, 0.0f,  0.0f, 0.0f, 0.0f
-    };
-
-    glGenVertexArrays(1, &menuVAO);
-    glGenBuffers(1, &menuVBO);
-
-    glBindVertexArray(menuVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, menuVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
 
 void Menu::renderButton(float x, float y, float width, float height, bool isSelected, std::string selectedOption) {
     float color[3] = { 0.8f, 0.8f, 0.8f };

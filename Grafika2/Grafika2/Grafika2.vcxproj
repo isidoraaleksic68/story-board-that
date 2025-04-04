@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Header Files</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages\glm.1.0.1\build\native\include;$(ProjectDir)Header Files</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -135,24 +135,27 @@
   <ItemGroup>
     <None Include="avatar_options.json" />
     <None Include="fragment.frag" />
-    <None Include="hairFragment.frag" />
-    <None Include="hairVertex.vert" />
-    <None Include="menuFragment.frag" />
-    <None Include="menuVertex.vert" />
+    <None Include="slides.vert" />
+    <None Include="textureFragment.frag" />
+    <None Include="textureVertex.vert" />
     <None Include="packages.config" />
     <None Include="vertex.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Slides.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Slides.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

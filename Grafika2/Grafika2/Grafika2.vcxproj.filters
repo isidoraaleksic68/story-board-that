@@ -25,16 +25,13 @@
     <None Include="avatar_options.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="hairVertex.vert">
+    <None Include="textureVertex.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="hairFragment.frag">
+    <None Include="textureFragment.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="menuVertex.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="menuFragment.frag">
+    <None Include="slides.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -51,6 +48,12 @@
     <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Slides.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,6 +66,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Avatar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Slides.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -25,7 +25,6 @@ private:
 
     GLuint menuVAO, menuVBO;
 
-    void setupMenuVertices();
     void renderButton(float x, float y, float width, float height, bool isSelected, std::string selectedOption);
     void renderImagesInLipsContainer(const std::string& folderPath);
     std::string getNextFile(const std::string& folderPath);
