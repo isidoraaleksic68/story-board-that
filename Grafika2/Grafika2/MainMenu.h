@@ -14,7 +14,6 @@ public:
 
     void render(float x, float y, float width, float height,int windowWidth, int windowHeight);
     void handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight);
-    void renderMainMenuBackground();
 
 private:
     Shader& shader;
@@ -24,11 +23,17 @@ private:
     int selectedOption;
     std::unordered_map<std::string, int> buttonFileIndices;
 
-    GLuint menuVAO, menuVBO;
+    unsigned int menuBackgroundVAO, menuBackgroundVBO, menuBackgroundEBO;
+    unsigned int bottomMenuVAO, bottomMenuVBO, bottomMenuEBO;
 
-    void renderButton(float x, float y, float width, float height, bool isSelected, std::string selectedOption);
-   // void renderImagesInLipsContainer(const std::string& folderPath);
-    //std::string getNextFile(const std::string& folderPath);
+    void renderButton(float x, float y, 
+        float width, float height,
+        bool isSelected, std::string selectedOption);
+
+    void setupMainMenuBackground();
+    void setupBottomMainMenu();
+    void renderMainMenuBackground();
+    void renderBottomMainMenu();
 };
 
 #endif

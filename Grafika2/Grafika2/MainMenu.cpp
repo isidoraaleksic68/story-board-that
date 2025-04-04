@@ -3,14 +3,100 @@
 #include "stb_image.h"
 #include <filesystem>
 
+
 MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar)
     : shader(shader), textureShader(textureShader), avatar(avatar), selectedOption(-1) {
     menuOptions = { "Scenes", "Characters", "Items", "Speech bubbles" };
+    setupMainMenuBackground();
+    setupBottomMainMenu();
 }
 
+
 MainMenu::~MainMenu() {
-    glDeleteVertexArrays(1, &menuVAO);
-    glDeleteBuffers(1, &menuVBO);
+    glDeleteBuffers(1, &menuBackgroundVAO);
+    glDeleteBuffers(1, &menuBackgroundVBO);
+    glDeleteVertexArrays(1, &menuBackgroundEBO);
+    glDeleteBuffers(1, &bottomMenuVAO);
+    glDeleteBuffers(1, &bottomMenuVBO);
+    glDeleteVertexArrays(1, &bottomMenuEBO);
+}
+
+
+void MainMenu::setupMainMenuBackground() {
+    float color[3] = { 0.949f, 0.788f, 0.769f };
+
+    float vertices[] = {
+        -1.0f,  1.0f, color[0], color[1], color[2], 1.0f, // Top-left
+        -1.0f,  0.8f, color[0], color[1], color[2], 1.0f, // Bottom-left
+         1.0f,  1.0f, color[0], color[1], color[2], 1.0f, // Top-right
+         1.0f,  0.8f, color[0], color[1], color[2], 1.0f  // Bottom-right
+    };
+
+    unsigned int indices[] = { 0, 1, 2, 1, 3, 2 };
+
+    glGenVertexArrays(1, &menuBackgroundVAO);
+    glBindVertexArray(menuBackgroundVAO);
+
+    glGenBuffers(1, &menuBackgroundVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, menuBackgroundVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &menuBackgroundEBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, menuBackgroundEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+}
+
+void MainMenu::setupBottomMainMenu() {
+    float color[3] = { 0.9961f, 0.9608f, 0.9098f };
+
+
+    float vertices[] = {
+    -0.7f,  -0.55f, color[0], color[1], color[2], 1.0f, // Top-left
+    -0.7f,  -1.0f, color[0], color[1], color[2], 1.0f, // Bottom-left
+     1.0f,  -0.55f, color[0], color[1], color[2], 1.0f, // Top-right
+     1.0f,  -1.0f, color[0], color[1], color[2], 1.0f  // Bottom-right
+    };
+
+    unsigned int indices[] = { 0, 1, 2, 1, 3, 2 };
+
+    glGenVertexArrays(1, &bottomMenuVAO);
+    glBindVertexArray(bottomMenuVAO);
+
+    glGenBuffers(1, &bottomMenuVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, bottomMenuVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &bottomMenuEBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bottomMenuEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+}
+
+void MainMenu::renderMainMenuBackground() {
+    shader.use();
+    glBindVertexArray(menuBackgroundVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void MainMenu::renderBottomMainMenu() {
+    shader.use();
+    glBindVertexArray(bottomMenuVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 void MainMenu::renderButton(float x, float y, float width, float height, bool isSelected, std::string selectedOption) {
@@ -66,13 +152,17 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
     glDeleteBuffers(1, &EBO);
 }
 
-void MainMenu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
-    shader.use();
-    glBindVertexArray(menuVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
 
-    renderMainMenuBackground();
+
+void MainMenu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
+    renderMainMenuBackground(); // Draw background first
+    //renderBottomMainMenu(); // Then draw bottom menu
+
+    if (selectedOption != -1) {
+        renderBottomMainMenu(); // Render bottom menu only if an option is selected
+        //renderBottomMainMenuTitle();
+        renderButton(-0.7f, -0.5f, 0.25f, 0.05f, true, menuOptions[selectedOption]);
+    }
 
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
@@ -81,50 +171,6 @@ void MainMenu::render(float x, float y, float width, float height, int windowWid
         float buttonX = -0.75f + i * 0.31f * aspectRatio; // Adjust button spacing based on aspect ratio
         renderButton(buttonX, y, width * aspectRatio, height, isSelected, menuOptions[i]);
     }
-}
-
-void MainMenu::renderMainMenuBackground() {
-    float color[3];
-    color[0] = 0.949f;  // Red (F2 / 255)
-    color[1] = 0.788f;  // Green (C9 / 255)
-    color[2] = 0.769f;  // Blue (C4 / 255)
-
-    // Corrected vertex order (Top-left, Bottom-left, Top-right, Bottom-right)
-    float vertices[] = {
-        -1.0f,  1.0f, color[0], color[1], color[2], 1.0f, // Top-left
-        -1.0f,  0.8f, color[0], color[1], color[2], 1.0f, // Bottom-left
-         1.0f,  1.0f, color[0], color[1], color[2], 1.0f, // Top-right
-         1.0f,  0.8f, color[0], color[1], color[2], 1.0f  // Bottom-right
-    };
-
-    // Corrected indices to form two triangles: (Top-left -> Bottom-left -> Top-right) & (Bottom-left -> Bottom-right -> Top-right)
-    unsigned int indices[] = { 0, 1, 2, 1, 3, 2 };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glUseProgram(shader.getID());
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteVertexArrays(1, &VAO);
 }
 
 
@@ -145,6 +191,7 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
             yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
             selectedOption = i;
             std::cout << "Clicked on " << menuOptions[i] << std::endl;
+            //renderBottomMainMenu();
         }
     }
 }

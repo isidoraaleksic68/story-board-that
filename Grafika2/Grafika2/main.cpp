@@ -118,12 +118,14 @@ int main() {
         avatarShader.use();
         textureShader.use();
 
+
+        slides.renderSlidesBackground();
+        slides.render(windowWidth, windowHeight);
+
         // Render menu buttons
         mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
 
         // Render slides system
-        slides.renderSlidesBackground();
-        slides.render(windowWidth, windowHeight);
 
 
         //avatar.draw(avatarShader, textureShader, windowWidth, windowHeight);
