@@ -31,17 +31,13 @@ An interactive visual storytelling tool powered by **C++**, **OpenGL**, **GLFW**
 
 ---
 
-## 📷 Screenshots  
-*(Add some screenshots of your storyboard interface or scenes if available)*
-
----
-
 ## 🧰 Getting Started
 
 ### 📦 Prerequisites
 - Visual Studio (2019 or later recommended)  
 - C++ compiler (MSVC)  
-- GLFW  
+- GLFW
+- GLM
 - GLEW  
 - OpenGL drivers (up-to-date)
 
