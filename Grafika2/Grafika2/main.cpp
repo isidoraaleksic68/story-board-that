@@ -4,6 +4,7 @@
 #include "Avatar.h"
 #include "Menu.h"
 #include "MainMenu.h"
+#include "Scenes.h"
 #include "Slides.h"
 #include <thread> 
 #include <chrono>
@@ -97,7 +98,8 @@ int main() {
     Shader slidesShader("slides.vert", "fragment.frag");
 
     Avatar avatar;
-    MainMenu mainMenu(avatarShader, textureShader, avatar);
+    Scenes scenes(slidesShader, textureShader);
+    MainMenu mainMenu(avatarShader, textureShader, avatar, scenes);
     Slides slides(slidesShader, avatarShader, textureShader);
 
     // Store both objects in AppState
@@ -126,8 +128,12 @@ int main() {
         mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
 
         // Render slides system
+        //scenes.drawScene(1, 0.0, 0.0, 1.0, 1.0);
 
-
+        //10,13,14
+        // 17 je skola ali bi bilo bolje da je iz unutra
+        // 19 je office mozes bolje
+        // fali bazen, plaza da bude normalna, klub, igraonica
         //avatar.draw(avatarShader, textureShader, windowWidth, windowHeight);
 
         glfwSwapBuffers(window);

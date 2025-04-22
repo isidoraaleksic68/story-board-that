@@ -54,6 +54,9 @@
     <ClInclude Include="Slides.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scenes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Slides.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
