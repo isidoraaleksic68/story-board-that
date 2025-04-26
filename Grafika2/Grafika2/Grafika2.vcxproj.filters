@@ -34,6 +34,9 @@
     <None Include="slides.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="characters.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

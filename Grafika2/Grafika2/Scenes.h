@@ -66,6 +66,9 @@ public:
     void setupClubScene();
     void setupBoatScene();
     void setupPlaneScene();
+    void setupCafe2Scene();
+    void setupRestoScene();
+    void setupBistroScene();
 
     std::vector<Scene> getAllScenes();
 

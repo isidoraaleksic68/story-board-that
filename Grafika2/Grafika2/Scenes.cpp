@@ -18,6 +18,7 @@ Scenes::Scenes(Shader& shader, Shader& textureShader)
     setupCityScene();
     setupFarmScene();
     setupForestScene();
+    //need to be fixed
     setupForestDayScene();
     setupKitchenScene();
     setupLakeScene();
@@ -30,9 +31,18 @@ Scenes::Scenes(Shader& shader, Shader& textureShader)
     setupSchoolScene();
     setupSchoolInsideScene();
     setupVillageScene();
+    //need to be fixed
     setupOfficeScene();
     setupSalonScene();
     setupInfirmaryScene();
+    //not implemented yet
+    setupBoatScene();
+    setupClubScene();
+    setupPoolScene();
+    setupPlaneScene();
+    setupCafe2Scene();
+    setupRestoScene();
+    setupBistroScene();
 };
 
 
@@ -255,32 +265,19 @@ void Scenes::setupBeachScene() {
     Scene scene;
 
     ScenePart beach;
-    GLuint texture = loadTexture("scenes/beach.png");
+    GLuint texture = loadTexture("scenes/beach (2).png");
     if (texture == 0) {
         std::cerr << "Error: Failed to load texture!" << std::endl;
         return;
     }
     beach.textureId = texture;
-    beach.height = 1.22f;
-    beach.width = 1.135f;
+    beach.height = 1.1f;
+    beach.width = 1.1f;
     beach.x = 0.0f;
-    beach.y = 0.3f;
+    beach.y = 0.2f;
     setupBuffersTexture(beach);
 
-    ScenePart floor;
-    floor.textureId = 0;
-    floor.height = 0.27f;
-    floor.width = 1.1f;
-    floor.x = 0.0f;
-    floor.y = -0.25f;
-    floor.color[0] = 0.9961f;
-    floor.color[1] = 1.0f;
-    floor.color[2] = 0.9294f;
-
-    setupBuffers(floor);
-
     scene.sceneParts.push_back(beach);
-    scene.sceneParts.push_back(floor);
 
     scenes.push_back(scene);
 };
@@ -364,13 +361,9 @@ void Scenes::setupCinemaScene() {
     background.width = 1.1f;
     background.x = 0.0f;
     background.y = 0.2f;
-    
-    //float color[3] = { 0.8706f, 0.8118f, 0.8118f };
-
     background.color[0] = 0.8706f;
     background.color[1] = 0.8118f;
     background.color[2] = 0.8118f;
-
     setupBuffers(background);
 
     scene.sceneParts.push_back(background);
@@ -378,6 +371,7 @@ void Scenes::setupCinemaScene() {
 
     scenes.push_back(scene);
 };
+
 
 void Scenes::setupCityScene() {
     Scene scene;
@@ -397,6 +391,7 @@ void Scenes::setupCityScene() {
     scenes.push_back(scene);
 };
 
+
 void Scenes::setupFarmScene() {
     Scene scene;
     ScenePart farm;
@@ -415,9 +410,9 @@ void Scenes::setupFarmScene() {
     scenes.push_back(scene);
 };
 
+
 void Scenes::setupForestScene() {
     Scene scene;
-
     ScenePart forest;
     GLuint texture = loadTexture("scenes/forest (2).png");
     if (texture == 0) {
@@ -434,11 +429,12 @@ void Scenes::setupForestScene() {
     scenes.push_back(scene);
 };
 
+
 void Scenes::setupForestDayScene() {
     Scene scene;
 
     ScenePart forest;
-    GLuint texture = loadTexture("scenes/forestday.png");
+    GLuint texture = loadTexture("scenes/forestday (2).png");
     if (texture == 0) {
         std::cerr << "Error: Failed to load texture!" << std::endl;
         return;
@@ -449,22 +445,7 @@ void Scenes::setupForestDayScene() {
     forest.x = 0.0f;
     forest.y = 0.2f;
     setupBuffersTexture(forest);
-
-    ScenePart sky;
-    sky.textureId = 0;
-    sky.height = 1.1f;
-    sky.width = 1.1f;
-    sky.x = 0.0f;
-    sky.y = 0.2f;
-    sky.color[0] = 0.4118f;
-    sky.color[1] = 0.8275f;
-    sky.color[2] = 0.9412f;
-
-    setupBuffers(sky);
-
-    scene.sceneParts.push_back(sky);
     scene.sceneParts.push_back(forest);
-
     scenes.push_back(scene);
 }
 
@@ -490,7 +471,6 @@ void Scenes::setupKitchenScene() {
     background.width = 1.1f;
     background.x = 0.0f;
     background.y = 0.2f;
-
     background.color[0] = 0.8706f;
     background.color[1] = 0.8118f;
     background.color[2] = 0.8118f;
@@ -789,48 +769,19 @@ void Scenes::setupVillageScene() {
 
 void Scenes::setupOfficeScene() {
     Scene scene;
-
     ScenePart office;
-    GLuint texture = loadTexture("scenes/office.png");
+    GLuint texture = loadTexture("scenes/office (2).png");
     if (texture == 0) {
         std::cerr << "Error: Failed to load texture!" << std::endl;
         return;
     }
     office.textureId = texture;
-    office.height = 0.7f;
-    office.width = 0.6f;
+    office.height = 1.1f;
+    office.width = 1.1f;
     office.x = 0.0f;
-    office.y = 0.3f;
+    office.y = 0.2f;
     setupBuffersTexture(office);
-
-    ScenePart wall;
-    wall.textureId = 0;
-    wall.height = 0.7f;
-    wall.width = 1.1f;
-    wall.x = 0.0f;
-    wall.y = 0.4f;
-    float color[3] = { 0.9294f, 0.8745f, 0.6039f };
-    wall.color[0] = color[0];
-    wall.color[1] = color[1];
-    wall.color[2] = color[2];
-    setupBuffers(wall);
-
-    ScenePart floor;
-    floor.textureId = 0;
-    floor.height = 0.6f;
-    floor.width = 1.1f;
-    floor.x = 0.0f;
-    floor.y = -0.05f;
-    float color1[3] = { 0.6314f, 0.6118f, 0.5176f };
-    floor.color[0] = color1[0];
-    floor.color[1] = color1[1];
-    floor.color[2] = color1[2];
-    setupBuffers(floor);
-
-    scene.sceneParts.push_back(floor);
-    scene.sceneParts.push_back(wall);
     scene.sceneParts.push_back(office);
-
     scenes.push_back(scene);
 }
 
@@ -903,13 +854,147 @@ void Scenes::setupInfirmaryScene() {
 }
 
 
-void setupPoolScene() {};
+void Scenes::setupPoolScene() {
+    Scene scene;
+    ScenePart pool;
+    GLuint texture = loadTexture("scenes/pool.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    pool.textureId = texture;
+    pool.height = 1.1f;
+    pool.width = 1.1f;
+    pool.x = 0.0f;
+    pool.y = 0.2f;
+    setupBuffersTexture(pool);
+    scene.sceneParts.push_back(pool);
+    scenes.push_back(scene);
+};
 
-void setupClubScene() {};
+void Scenes::setupClubScene() {
+    Scene scene;
+    ScenePart nightClub;
+    GLuint texture = loadTexture("scenes/club.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    nightClub.textureId = texture;
+    nightClub.height = 1.1f;
+    nightClub.width = 1.1f;
+    nightClub.x = 0.0f;
+    nightClub.y = 0.2f;
+    setupBuffersTexture(nightClub);
+    scene.sceneParts.push_back(nightClub);
+    scenes.push_back(scene);
+};
 
-void setupBoatScene() {};
+void Scenes::setupBoatScene() {
+    Scene scene;
+    ScenePart boat;
+    GLuint texture = loadTexture("scenes/boat.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    boat.textureId = texture;
+    boat.height = 1.1f;
+    boat.width = 1.1f;
+    boat.x = 0.0f;
+    boat.y = 0.2f;
+    setupBuffersTexture(boat);
 
-void setupPlaneScene() {};
+
+    ScenePart sky;
+    sky.textureId = 0;
+    sky.height = 1.1f;
+    sky.width = 1.1f;
+    sky.x = 0.0f;
+    sky.y = 0.2f;
+    sky.color[0] = 0.4118f;
+    sky.color[1] = 0.8275f;
+    sky.color[2] = 0.9412f;
+
+    setupBuffers(sky);
+
+    scene.sceneParts.push_back(sky);
+    scene.sceneParts.push_back(boat);
+    scenes.push_back(scene);
+};
+
+void Scenes::setupPlaneScene() {
+    Scene scene;
+    ScenePart plane;
+    GLuint texture = loadTexture("scenes/plane.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    plane.textureId = texture;
+    plane.height = 1.1f;
+    plane.width = 1.1f;
+    plane.x = 0.0f;
+    plane.y = 0.2f;
+    setupBuffersTexture(plane);
+    scene.sceneParts.push_back(plane);
+    scenes.push_back(scene);
+};
+
+void Scenes::setupCafe2Scene() {
+    Scene scene;
+    ScenePart resto;
+    GLuint texture = loadTexture("scenes/cafe (2).png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    resto.textureId = texture;
+    resto.height = 1.1f;
+    resto.width = 1.1f;
+    resto.x = 0.0f;
+    resto.y = 0.2f;
+    setupBuffersTexture(resto);
+    scene.sceneParts.push_back(resto);
+    scenes.push_back(scene);
+};
+
+void Scenes::setupBistroScene() {
+    Scene scene;
+    ScenePart resto;
+    GLuint texture = loadTexture("scenes/bistro.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    resto.textureId = texture;
+    resto.height = 1.1f;
+    resto.width = 1.1f;
+    resto.x = 0.0f;
+    resto.y = 0.2f;
+    setupBuffersTexture(resto);
+    scene.sceneParts.push_back(resto);
+    scenes.push_back(scene);
+}
+
+void Scenes::setupRestoScene() {
+    Scene scene;
+    ScenePart resto;
+    GLuint texture = loadTexture("scenes/resto (3).png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load texture!" << std::endl;
+        return;
+    }
+    resto.textureId = texture;
+    resto.height = 1.1f;
+    resto.width = 1.1f;
+    resto.x = 0.0f;
+    resto.y = 0.2f;
+    setupBuffersTexture(resto);
+    scene.sceneParts.push_back(resto);
+    scenes.push_back(scene);
+};
+
 
 
 std::vector<Scenes::Scene> Scenes::getAllScenes() {
@@ -930,21 +1015,13 @@ void Scenes::renderActiveScenes(int currentMenuPage, int windowWidth, int window
     int startIndex = (currentMenuPage - 1) * 4; // Calculate the starting index
     int endIndex = startIndex + 4; // Get up to 5 slides per page
 
-    //std::cout << "Slides count: " << slides.size() << std::endl;
-
     if (endIndex > scenes.size()) {
         endIndex = scenes.size();
     }
 
     float moving = 0.25f;
 
-    //activeScenes.clear();
     for (int i = startIndex; i < endIndex; i++) {
-        //activeScenes.push_back(scenes[i]);
         drawScene(i, -0.45f + (i%4) * moving * aspectRatio, -0.8f, 0.2f * aspectRatio, 0.2f);
     }
-
-    /*for (int i = 0; i < 4; ++i) {
-        drawScene(i, -0.45f + i * moving * aspectRatio, -0.8f, 0.2f * aspectRatio, 0.2f);
-    }*/
 };

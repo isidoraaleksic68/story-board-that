@@ -27,8 +27,47 @@ private:
     GLuint rightFootTexture;
     GLuint leftFootTexture;
 
+    Shader& shader;
+    Shader& textureShader;
+
 public:
-    Avatar();
+    Avatar(Shader& shader, Shader& textureShader);
+    ~Avatar();
+
+    struct BodyPart {
+        float x, y, width, height;
+        GLuint VAO, VBO, EBO;
+        GLuint textureId;
+        std::vector<float> vertices;       // Contains position and color per vertex
+        std::vector<unsigned int> indices; // Indices for glDrawElements
+    };
+
+    struct Character {
+        std::string name;
+        std::vector<BodyPart> bodyParts;
+    };
+
+
+    std::vector<Character> characters;
+
+    void setupHead(Character& character);
+    void setupNeck(Character& character);
+    void setupTorso(Character& character);
+    void setupArms(Character& character);
+    void setupLegs(Character& character);
+
+    void setupNewCharacter();
+
+
+    void setupBuffers(BodyPart& scenePart);
+    void setupBuffersTexture(BodyPart& scenePart);
+
+
+    void writeCharactersToJson(const std::vector<Avatar::Character>& characters, const std::string& filePath);
+    std::vector<Character> readCharactersFromJson(const std::string& filePath);
+
+
+    void drawCharacter(int characterIndex, float x, float y, float width, float height);
 
     void draw(Shader& shader, Shader& textureShader, float windowWidth, float windowHeight);
     void drawFace(Shader& shader);

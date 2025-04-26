@@ -1,10 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"
-#include "Avatar.h"
 #include "Menu.h"
 #include "MainMenu.h"
-#include "Scenes.h"
 #include "Slides.h"
 #include <thread> 
 #include <chrono>
@@ -97,7 +95,7 @@ int main() {
     Shader textureShader("textureVertex.vert", "textureFragment.frag");
     Shader slidesShader("slides.vert", "fragment.frag");
 
-    Avatar avatar;
+    Avatar avatar(slidesShader, textureShader);
     Scenes scenes(slidesShader, textureShader);
     MainMenu mainMenu(avatarShader, textureShader, avatar, scenes);
     Slides slides(slidesShader, avatarShader, textureShader);
@@ -126,7 +124,7 @@ int main() {
 
         // Render menu buttons
         mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
-
+        avatar.drawCharacter(0, 0.1f, 0.2f, 0.5f, 0.5f);
         // Render slides system
         //scenes.drawScene(1, 0.0, 0.0, 1.0, 1.0);
 

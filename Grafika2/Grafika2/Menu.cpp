@@ -106,7 +106,7 @@ void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int w
                 GLuint textureID = avatar.loadTexture(nextFile.c_str());
                 if (menuOptions[i] == "Lips") {
                     avatar.setMouthTexture(textureID);
-                    avatar.drawMouth(shader);
+                   // avatar.drawMouth(shader);
                 }
                 else if (menuOptions[i] == "Eyes") {
                     avatar.setEyeTexture(textureID);

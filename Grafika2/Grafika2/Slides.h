@@ -4,6 +4,8 @@
 #include <vector>
 #include "Shader.h"
 #include <GL/glew.h>
+#include "Scenes.h"
+#include "Avatar.h"
 
 class Slides {
 public:
@@ -21,9 +23,9 @@ private:
     struct Slide {
         float x, y, width, height;
         GLuint VAO, VBO, EBO;
-        GLuint scene;
         GLuint textureId;
-
+        Scenes::Scene scene;
+        std::vector<Avatar::Character> characters;
     };
 
     Shader& avatarShader;
