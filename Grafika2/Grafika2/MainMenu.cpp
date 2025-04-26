@@ -383,6 +383,7 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
         if (xNDC >= x && xNDC <= x + buttonWidth &&
             yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
             selectedOption = i;
+            currentMenuPage = 1;
             std::cout << "Clicked on " << menuOptions[i] << std::endl;
         }
     }
