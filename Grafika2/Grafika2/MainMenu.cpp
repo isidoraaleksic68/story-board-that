@@ -2,13 +2,17 @@
 #include <iostream>
 #include "stb_image.h"
 #include <filesystem>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-
-MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar)
-    : shader(shader), textureShader(textureShader), avatar(avatar), selectedOption(-1) {
+MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar, Scenes& scenes)
+    : shader(shader), textureShader(textureShader), avatar(avatar), scenes(scenes)
+    , selectedOption(-1), selectedScene(-1) {
     menuOptions = { "Scenes", "Characters", "Items", "Speech bubbles" };
     setupMainMenuBackground();
     setupBottomMainMenu();
+    totalMenuPage = 1;
+    currentMenuPage = 1;
 }
 
 
@@ -111,11 +115,12 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     float vertices[] = {
-        x, y - height,  0.0f, 0.0f,
-        x + width, y - height, 1.0f, 0.0f,
-        x + width, y + height, 1.0f, 1.0f,
-        x, y + height , 0.0f, 1.0f
+    -0.5f, -0.9f, 0.0f, 0.0f,
+     0.5f, -0.9f, 1.0f, 0.0f,
+     0.5f,  0.9f, 1.0f, 1.0f,
+    -0.5f,  0.9f, 0.0f, 1.0f
     };
+
 
     unsigned int indices[] = { 0, 1, 2, 0, 2, 3 };
 
@@ -138,6 +143,14 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
 
     textureShader.use();
     glActiveTexture(GL_TEXTURE0);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(x + width / 2.0f, y, 0.0f));
+    model = glm::scale(model, glm::vec3(width, height, 1.0f));
+
+    GLuint modelLoc = glGetUniformLocation(textureShader.getID(), "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
     glBindTexture(GL_TEXTURE_2D, buttonTexture);
     textureShader.setInt("texture1", 0);
 
@@ -155,16 +168,18 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
 
 
 void MainMenu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
-    renderMainMenuBackground(); // Draw background first
-    //renderBottomMainMenu(); // Then draw bottom menu
+    renderMainMenuBackground();
+    float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
     if (selectedOption != -1) {
-        renderBottomMainMenu(); // Render bottom menu only if an option is selected
-        //renderBottomMainMenuTitle();
+        renderBottomMainMenu();
         renderButton(-0.7f, -0.5f, 0.25f, 0.05f, true, menuOptions[selectedOption]);
+        renderSelectedOptionComponents(windowWidth, windowHeight);
     }
 
-    float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+    if (selectedScene != -1) {
+        scenes.drawScene(selectedScene, 0.0, 0.0, 1.0, 1.0);
+    }
 
     for (int i = 0; i < menuOptions.size(); ++i) {
         bool isSelected = (i == selectedOption);
@@ -174,6 +189,171 @@ void MainMenu::render(float x, float y, float width, float height, int windowWid
 }
 
 
+void MainMenu::renderNextButton(float x, float y, float width, float height) {
+    GLuint texture = avatar.loadTexture("arrows/rightarrow.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load Add Slide texture!" << std::endl;
+        return;
+    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    // Texture coordinates are from bottom-left (0, 0) to top-right (1, 1)
+    float vertices[] = {
+        // positions        // tex coords
+        -0.5f, -0.5f,       0.0f, 0.0f, // bottom left
+         0.5f, -0.5f,       1.0f, 0.0f, // bottom right
+         0.5f,  0.5f,       1.0f, 1.0f, // top right
+        -0.5f,  0.5f,       0.0f, 1.0f  // top left
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Vertex positions
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Texture coordinates
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+
+    textureShader.use();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(x, y, 0.0f));
+    model = glm::scale(model, glm::vec3(width, height, 1.0f));
+
+    // Pass model matrix
+    GLuint modelLoc = glGetUniformLocation(textureShader.getID(), "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
+    // Enable blending for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Texture binding
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    textureShader.setInt("texture1", 0);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_BLEND);
+};
+
+void MainMenu::renderPreviousButton(float x, float y, float width, float height) {
+    GLuint texture = avatar.loadTexture("arrows/leftarrow.png");
+    if (texture == 0) {
+        std::cerr << "Error: Failed to load Add Slide texture!" << std::endl;
+        return;
+    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    // Texture coordinates are from bottom-left (0, 0) to top-right (1, 1)
+    float vertices[] = {
+        // positions        // tex coords
+        -0.5f, -0.5f,       0.0f, 0.0f, // bottom left
+         0.5f, -0.5f,       1.0f, 0.0f, // bottom right
+         0.5f,  0.5f,       1.0f, 1.0f, // top right
+        -0.5f,  0.5f,       0.0f, 1.0f  // top left
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Vertex positions
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Texture coordinates
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+
+    textureShader.use();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(x, y, 0.0f));
+    model = glm::scale(model, glm::vec3(width, height, 1.0f));
+
+    // Pass model matrix
+    GLuint modelLoc = glGetUniformLocation(textureShader.getID(), "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
+    // Enable blending for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Texture binding
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    textureShader.setInt("texture1", 0);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_BLEND);
+};
+
+void MainMenu::renderSelectedOptionComponents(int windowWidth, int windowHeight) {
+    std::string selected = menuOptions[selectedOption];
+    if (selected == "Scenes") {
+        totalMenuPage = scenes.getTotalMenuPages();
+        scenes.renderActiveScenes(currentMenuPage, windowWidth, windowHeight);
+        if (totalMenuPage > currentMenuPage) {
+            renderNextButton(0.9f, -0.75f, 0.1f, 0.2f);
+        }
+        if (currentMenuPage > 1) {
+            renderPreviousButton(0.78f, -0.75f, 0.1f, 0.2f);
+        }
+        
+    }
+};
+
 void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight) {
     float xNDC = (2.0f * mouseX) / windowWidth - 1.0f;
     float yNDC = 1.0f - (2.0f * mouseY) / windowHeight;
@@ -181,7 +361,7 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
     
     float buttonWidth = 0.3f * aspectRatio;
-    float buttonHeight = 0.1f;
+    float buttonHeight = 0.08f;
 
     for (int i = 0; i < menuOptions.size(); ++i) {
         float x = -0.75f + i * 0.31f * aspectRatio; // Adjust for resizing
@@ -191,9 +371,55 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
             yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
             selectedOption = i;
             std::cout << "Clicked on " << menuOptions[i] << std::endl;
-            //renderBottomMainMenu();
         }
     }
+
+    //from here to recognize clicking on the menu item
+    float optionWidth = 0.2f * aspectRatio;
+    float optionHeight = 0.2f;
+
+    for (int i = 0; i < 4; i++) {
+        float x = -0.45f + i * 0.25f * aspectRatio;
+        float y = -0.8f;
+
+        float halfWidth = optionWidth / 2.0f;
+        float halfHeight = optionHeight / 2.0f;
+
+        if (xNDC >= x - halfWidth && xNDC <= x + halfWidth &&
+            yNDC >= y - halfHeight && yNDC <= y + halfHeight) {
+            std::cout << "Clicked on scene index: " << i << std::endl;
+            int realSceneIndex = (currentMenuPage - 1) * 4 + i;
+            selectedScene = realSceneIndex;
+
+        }
+    }
+
+    //to here
+
+    // renderNextButton(0.9f, -0.75f, 0.1f, 0.2f);
+
+    float halfWidth = 0.1f / 2.0f;
+    float halfHeight = 0.2f / 2.0f;
+
+    if (xNDC >= 0.9 - halfWidth && xNDC <= 0.9 + halfWidth &&
+        yNDC >= -0.75 - halfHeight && yNDC <= -0.75 + halfHeight 
+        && totalMenuPage > currentMenuPage) {
+        std::cout << "Clicked on next button." << std::endl;
+        currentMenuPage++;
+    }
+
+    //renderPreviousButton(0.78f, -0.75f, 0.1f, 0.2f);
+
+    if (xNDC >= 0.78 - halfWidth && xNDC <= 0.78 + halfWidth &&
+        yNDC >= -0.75 - halfHeight && yNDC <= -0.75 + halfHeight 
+        && currentMenuPage > 1) {
+        std::cout << "Clicked on previous button." << std::endl;
+        currentMenuPage--;
+    }
+
+
+
+
 }
 
 

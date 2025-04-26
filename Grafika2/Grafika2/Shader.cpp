@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 
+
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) {
     std::string vertexCode = readFile(vertexPath);
     std::string fragmentCode = readFile(fragmentPath);
@@ -80,3 +81,7 @@ void Shader::setInt(const std::string& name, int value) {
 void Shader::setBool(const std::string& name, bool value) {
     glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
 };
+
+void Shader::setMat4(const std::string& name, const glm::mat4& mat) {
+    glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+}

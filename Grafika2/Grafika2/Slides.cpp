@@ -317,7 +317,6 @@ void Slides::renderPreviousButton(float x, float y, float width, float height) {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_BLEND);
 };
-
 void Slides::setupBuffersTexture(Slide& slide) {
     GLuint texture = loadTexture("slides/addslide.png");
     if (texture == 0) {
@@ -326,19 +325,18 @@ void Slides::setupBuffersTexture(Slide& slide) {
     }
     slide.textureId = texture;
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+    // Texture coordinates are from bottom-left (0, 0) to top-right (1, 1)
     float vertices[] = {
-        slide.x - slide.width / 2, slide.y - slide.height / 2, 0.0f, 0.0f,
-        slide.x + slide.width / 2, slide.y - slide.height / 2, 1.0f, 0.0f,
-        slide.x + slide.width / 2, slide.y + slide.height / 2, 1.0f, 1.0f,
-        slide.x - slide.width / 2, slide.y + slide.height / 2, 0.0f, 1.0f
+        // positions        // tex coords
+        -0.5f, -0.5f,       0.0f, 0.0f, // bottom left
+         0.5f, -0.5f,       1.0f, 0.0f, // bottom right
+         0.5f,  0.5f,       1.0f, 1.0f, // top right
+        -0.5f,  0.5f,       0.0f, 1.0f  // top left
     };
 
     unsigned int indices[] = {
-        0, 1, 2, // first triangle
-        0, 2, 3  // second triangle
+        0, 1, 2,
+        0, 2, 3
     };
 
     glGenVertexArrays(1, &slide.VAO);
@@ -353,23 +351,15 @@ void Slides::setupBuffersTexture(Slide& slide) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, slide.EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+    // Vertex positions
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // Texture coordinates
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    textureShader.use();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    textureShader.setInt("texture1", 0);
-
-    glBindVertexArray(slide.VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
     glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_BLEND);
 }
 
 
@@ -422,11 +412,8 @@ int Slides::getSlidesCount() {
     }
     return numberOfSlides - 1;
 }
-
-
 void Slides::render(int windowWidth, int windowHeight) {
     int totalPages = calculateTotalPages();
-    //std::cout << "Total pages: " << totalPages << std::endl;
     std::vector<Slide> activeSlides = getActiveSlides();
 
     if (currentSlidesPage < totalPages) {
@@ -436,35 +423,51 @@ void Slides::render(int windowWidth, int windowHeight) {
     if (currentSlidesPage > 1) {
         renderPreviousButton(-0.9f, -0.85f, 0.1f, 0.15f);
     }
-    
+
     for (size_t i = 0; i < activeSlides.size(); i++) {
         Slide& slide = activeSlides[i];
 
-        if (slide.textureId!=0) {
-            textureShader.use();
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, slide.textureId); // Ensure texture is bound
-            textureShader.setInt("texture1", 0);
-        }
-        else {
-            shader.use(); 
-            glUniform1i(glGetUniformLocation(shader.getID(), "useTexture"), false); // Set uniform to disable textures
-        }
-
-        glBindVertexArray(slide.VAO);
-
-        // Transformations
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(slide.x, slide.y, 0.0f));
         model = glm::scale(model, glm::vec3(slide.width, slide.height, 1.0f));
 
-        GLuint modelLoc = glGetUniformLocation(shader.getID(), "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+        if (slide.textureId != 0) {
+            textureShader.use();
 
-        // Draw the slide
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            // Pass model matrix
+            GLuint modelLoc = glGetUniformLocation(textureShader.getID(), "model");
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
+            // Enable blending for transparency
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            // Texture binding
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, slide.textureId);
+            textureShader.setInt("texture1", 0);
+
+            glBindVertexArray(slide.VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            glBindVertexArray(0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glDisable(GL_BLEND);
+        }
+        else {
+            shader.use();
+            glUniform1i(glGetUniformLocation(shader.getID(), "useTexture"), false);
+
+            GLuint modelLoc = glGetUniformLocation(shader.getID(), "model");
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
+            glBindVertexArray(slide.VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+        }
     }
 }
+
 
 void Slides::handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight) {
     float normalizedX = (mouseX / windowWidth) * 2.0f - 1.0f;

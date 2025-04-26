@@ -1,6 +1,0 @@
-﻿  MainMenu.cpp
-C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\MainMenu.cpp(178,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\isido\Documents\story-board-that\Grafika2\Grafika2\MainMenu.cpp(179,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  main.cpp
-  Generating Code...
-  Grafika2.vcxproj -> C:\Users\isido\Documents\story-board-that\Grafika2\x64\Debug\Grafika2.exe
