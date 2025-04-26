@@ -124,7 +124,7 @@ int main() {
 
         // Render menu buttons
         mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
-        avatar.drawCharacter(0, 0.1f, 0.2f, 0.5f, 0.5f);
+      //  avatar.drawCharacter(0, 0.1f, 0.2f, 0.5f, 0.5f);
         // Render slides system
         //scenes.drawScene(1, 0.0, 0.0, 1.0, 1.0);
 

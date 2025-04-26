@@ -25,6 +25,7 @@ private:
     std::vector<std::string> menuOptions;
     int selectedOption;
     int selectedScene;
+    int selectedCharacter;
     std::unordered_map<std::string, int> buttonFileIndices;
 
     unsigned int menuBackgroundVAO, menuBackgroundVBO, menuBackgroundEBO;

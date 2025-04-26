@@ -1022,6 +1022,6 @@ void Scenes::renderActiveScenes(int currentMenuPage, int windowWidth, int window
     float moving = 0.25f;
 
     for (int i = startIndex; i < endIndex; i++) {
-        drawScene(i, -0.45f + (i%4) * moving * aspectRatio, -0.8f, 0.2f * aspectRatio, 0.2f);
+        drawScene(i, -0.45f + (i%4) * moving * aspectRatio, -0.8f , 0.2f * aspectRatio, 0.2f);
     }
 };
