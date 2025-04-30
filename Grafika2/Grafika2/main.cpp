@@ -19,6 +19,7 @@ int windowHeight = initialWindowHeight;
 struct AppState {
     MainMenu* mainMenu;
     Slides* slides;
+    Menu* menu;
 };
 
 // Callback for window resizing
@@ -47,6 +48,10 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
         if (state->slides) {
             state->slides->handleMouseClick(normalizedX, normalizedY, initialWindowWidth, initialWindowHeight);
+        }
+
+        if (state->menu) {
+            state->menu->handleMouseClick(normalizedX, normalizedY, initialWindowWidth, initialWindowHeight);
         }
     }
 }
@@ -97,11 +102,11 @@ int main() {
 
     Avatar avatar(slidesShader, textureShader);
     Scenes scenes(slidesShader, textureShader);
-    MainMenu mainMenu(avatarShader, textureShader, avatar, scenes);
+    Menu menu(slidesShader, textureShader, avatar);
     Slides slides(slidesShader, avatarShader, textureShader);
-
+    MainMenu mainMenu(avatarShader, textureShader, avatar, scenes, menu, slides);
     // Store both objects in AppState
-    AppState appState = { &mainMenu, &slides };
+    AppState appState = { &mainMenu, &slides, &menu };
     glfwSetWindowUserPointer(window, &appState);
 
     glfwShowWindow(window);
@@ -120,10 +125,11 @@ int main() {
 
 
         slides.renderSlidesBackground();
-        slides.render(windowWidth, windowHeight);
+      //  slides.render(windowWidth, windowHeight);
 
         // Render menu buttons
         mainMenu.render(-0.75f, 0.9f, 0.3f, 0.08f, initialWindowWidth, initialWindowHeight);
+      // menu.render(0.67f, 0.7f, 0.25f, 0.05f, windowWidth, windowHeight);
       //  avatar.drawCharacter(0, 0.1f, 0.2f, 0.5f, 0.5f);
         // Render slides system
         //scenes.drawScene(1, 0.0, 0.0, 1.0, 1.0);

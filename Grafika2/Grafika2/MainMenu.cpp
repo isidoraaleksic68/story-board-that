@@ -5,8 +5,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar, Scenes& scenes)
-    : shader(shader), textureShader(textureShader), avatar(avatar), scenes(scenes)
+MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar, 
+    Scenes& scenes, Menu& menu, Slides& slides)
+    : shader(shader), textureShader(textureShader), avatar(avatar), 
+    scenes(scenes), menu(menu), slides(slides)
     , selectedOption(-1), selectedScene(-1), selectedCharacter(-1) {
     menuOptions = { "Scenes", "Characters", "Items", "Speech bubbles" };
     setupMainMenuBackground();
@@ -169,6 +171,7 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
 
 void MainMenu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
     renderMainMenuBackground();
+    slides.render(windowWidth, windowHeight);
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
     if (selectedOption != -1) {
@@ -182,7 +185,8 @@ void MainMenu::render(float x, float y, float width, float height, int windowWid
     }
 
     if (selectedCharacter != -1) {
-        avatar.drawCharacter(selectedCharacter, 0.1f, 0.2f, 0.5f, 0.5f);
+        avatar.drawCharacter(selectedCharacter, 0.0f, 0.2f, 0.5f, 0.5f);
+        menu.render(0.7f, 0.7f, 0.22f, 0.04f, windowWidth, windowHeight);
     }
 
     for (int i = 0; i < menuOptions.size(); ++i) {

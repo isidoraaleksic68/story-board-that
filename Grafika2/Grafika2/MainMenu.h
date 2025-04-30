@@ -4,13 +4,15 @@
 #include <vector>
 #include <string>
 #include "Shader.h"
-#include "Avatar.h"
 #include "Scenes.h"
 #include <unordered_map>
+#include "Menu.h"
+#include "Slides.h"
 
 class MainMenu {
 public:
-    MainMenu(Shader& avatarShader, Shader& textureShader, Avatar& avatar, Scenes& scenes);
+    MainMenu(Shader& avatarShader, Shader& textureShader, Avatar& avatar, 
+        Scenes& scenes, Menu& menu, Slides& slides);
     ~MainMenu();
 
     void render(float x, float y, float width, float height,int windowWidth, int windowHeight);
@@ -21,6 +23,8 @@ private:
     Shader& textureShader;
     Avatar& avatar;
     Scenes& scenes;
+    Slides& slides;
+    Menu& menu;
 
     std::vector<std::string> menuOptions;
     int selectedOption;
