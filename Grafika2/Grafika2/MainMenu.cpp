@@ -5,9 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar, Scenes& scenes)
-    : shader(shader), textureShader(textureShader), avatar(avatar), scenes(scenes)
-    , selectedOption(-1), selectedScene(-1) {
+MainMenu::MainMenu(Shader& shader, Shader& textureShader, Avatar& avatar, 
+    Scenes& scenes, Menu& menu, Slides& slides)
+    : shader(shader), textureShader(textureShader), avatar(avatar), 
+    scenes(scenes), menu(menu), slides(slides)
+    , selectedOption(-1), selectedScene(-1), selectedCharacter(-1) {
     menuOptions = { "Scenes", "Characters", "Items", "Speech bubbles" };
     setupMainMenuBackground();
     setupBottomMainMenu();
@@ -169,6 +171,7 @@ void MainMenu::renderButton(float x, float y, float width, float height, bool is
 
 void MainMenu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
     renderMainMenuBackground();
+    slides.render(windowWidth, windowHeight);
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
     if (selectedOption != -1) {
@@ -179,6 +182,16 @@ void MainMenu::render(float x, float y, float width, float height, int windowWid
 
     if (selectedScene != -1) {
         scenes.drawScene(selectedScene, 0.0, 0.0, 1.0, 1.0);
+    }
+
+    if (selectedCharacter != -1) {
+        std::vector<Avatar::Character>& characters = avatar.getCharacters();
+        menu.character = &characters[selectedCharacter];
+
+        menu.render(0.7f, 0.7f, 0.22f, 0.04f, windowWidth, windowHeight);
+
+        avatar.drawCharacter(selectedCharacter, menu.character->x, menu.character->y,
+            menu.character->width, menu.character->height);
     }
 
     for (int i = 0; i < menuOptions.size(); ++i) {
@@ -349,8 +362,17 @@ void MainMenu::renderSelectedOptionComponents(int windowWidth, int windowHeight)
         }
         if (currentMenuPage > 1) {
             renderPreviousButton(0.78f, -0.75f, 0.1f, 0.2f);
+        }   
+    }
+    if (selected == "Characters") {
+        totalMenuPage = avatar.getTotalMenuPages();
+        avatar.renderActiveCharacters(currentMenuPage, windowWidth, windowHeight);
+        if (totalMenuPage > currentMenuPage) {
+            renderNextButton(0.9f, -0.75f, 0.1f, 0.2f);
         }
-        
+        if (currentMenuPage > 1) {
+            renderPreviousButton(0.78f, -0.75f, 0.1f, 0.2f);
+        }
     }
 };
 
@@ -370,6 +392,7 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
         if (xNDC >= x && xNDC <= x + buttonWidth &&
             yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
             selectedOption = i;
+            currentMenuPage = 1;
             std::cout << "Clicked on " << menuOptions[i] << std::endl;
         }
     }
@@ -387,9 +410,18 @@ void MainMenu::handleMouseClick(double mouseX, double mouseY, int windowWidth, i
 
         if (xNDC >= x - halfWidth && xNDC <= x + halfWidth &&
             yNDC >= y - halfHeight && yNDC <= y + halfHeight) {
-            std::cout << "Clicked on scene index: " << i << std::endl;
-            int realSceneIndex = (currentMenuPage - 1) * 4 + i;
-            selectedScene = realSceneIndex;
+            std::string selected = menuOptions[selectedOption];
+            if (selected == "Scenes") {
+                std::cout << "Clicked on scene index: " << i << std::endl;
+                int realSceneIndex = (currentMenuPage - 1) * 4 + i;
+                selectedScene = realSceneIndex;
+            }
+            if (selected == "Characters") {
+                std::cout << "Clicked on character index: " << i << std::endl;
+                int realCharacterIndex = (currentMenuPage - 1) * 4 + i;
+                selectedCharacter = realCharacterIndex;
+
+            }
 
         }
     }
