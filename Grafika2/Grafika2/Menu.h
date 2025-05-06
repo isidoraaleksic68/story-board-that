@@ -14,6 +14,7 @@ public:
 
     void render(float x, float y, float width, float height, int windowWidth, int windowHeight);
     void handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight);
+    Avatar::Character* character;
 
 private:
     Shader& shader;
@@ -41,6 +42,9 @@ private:
     void renderMenuBackground();
 
     void renderPreviousButton(float x, float y, float width, float height);
+
+    void renderLabel(float x, float y, const std::string& text);
+    void renderInputBox(float x, float y, float width, float height, float value);
 };
 
 #endif

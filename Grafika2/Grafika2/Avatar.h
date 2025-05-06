@@ -45,8 +45,14 @@ public:
     struct Character {
         std::string name;
         std::vector<BodyPart> bodyParts;
+        float x;
+        float y;
+        float height;
+        float width;
     };
 
+
+    std::vector<Character>& getCharacters();
 
     std::vector<Character> characters;
 

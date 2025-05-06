@@ -3,13 +3,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <filesystem>
+#include <sstream>    // For std::stringstream
+#include <iomanip>    // For std::fixed and std::setprecision
 
 Menu::Menu(Shader& shader, Shader& textureShader, Avatar& avatar)
-    : shader(shader), textureShader(textureShader), avatar(avatar), 
-    editOption(-1), mainOption(-1), resizeOption(-1) {
+    : shader(shader), textureShader(textureShader), avatar(avatar),
+    editOption(-1), mainOption(-1), resizeOption(-1), character(nullptr){
     editOptions = { "Eyes", "Eyebrows" ,"Lips", "Nose", "Hair", "T-shirts", "Pants"};
     mainOptions = { "Resize", "Edit" };
-    resizeOptions = {"Height", "Width", "X", "Y"};\
+    resizeOptions = {"Height", "Width", "X", "Y"};
     setupMenuBackground();
 }
 
@@ -152,6 +154,7 @@ void Menu::renderButton(float x, float y, float width, float height,
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
 }
+
 void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int windowHeight) {
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
@@ -164,16 +167,19 @@ void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int w
     float buttonHeight = 0.04f * aspectRatio;
     float spacing = 0.1f * aspectRatio;
 
-
-    float halfWidth = buttonWidth / 2.0f;
-    float halfHeight = buttonHeight/ 2.0f;
+    float resizeButtonSpacing = 0.2f * aspectRatio;
+    float resizeButtonXMinus = 0.7f;
+    float resizeButtonXPlus = 0.7f + buttonWidth / 2;
+    float resizeButtonYStart = 0.7f - 0.05f - buttonHeight * 2;
+    float resizeButtonWidth = buttonWidth / 2;
+    float resizeButtonHeight = buttonHeight;
 
     if (mainOption == -1) {
         for (int i = 0; i < mainOptions.size(); ++i) {
             float y = buttonYStart - i * spacing;
 
-            if (xNDC >= buttonX - halfWidth && xNDC <= buttonX + halfWidth &&
-                yNDC >= y  - halfHeight && yNDC <= y + halfHeight) {
+            if (xNDC >= buttonX && xNDC <= buttonX + buttonWidth &&
+                yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
                 std::cout << "Clicked on " << mainOptions[i] << std::endl;
                 mainOption = i;
                 break;
@@ -181,6 +187,86 @@ void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int w
         }
     }
     else if (mainOption == 0) {
+        const float slideX = 0.0f;
+        const float slideY = 0.2f;
+        const float slideWidth = 1.1f;
+        const float slideHeight = 1.1f;
+
+        for (int i = 0; i < resizeOptions.size(); ++i) {
+            float y = resizeButtonYStart - i * resizeButtonSpacing;
+
+            bool clickedMinus = (xNDC >= resizeButtonXMinus && xNDC <= resizeButtonXMinus + resizeButtonWidth &&
+                yNDC >= y - resizeButtonHeight && yNDC <= y + resizeButtonHeight);
+
+            bool clickedPlus = (xNDC >= resizeButtonXPlus && xNDC <= resizeButtonXPlus + resizeButtonWidth &&
+                yNDC >= y - resizeButtonHeight && yNDC <= y + resizeButtonHeight);
+
+            if (clickedMinus || clickedPlus) {
+                resizeOption = i;
+                float delta = clickedPlus ? 0.05f : -0.05f;
+                float slideLimitWidth = clickedPlus ? slideX + slideWidth / 2 : slideX - slideWidth / 2;
+                float slideLimitHeight = clickedPlus ? slideY + slideHeight / 2 : slideY - slideHeight / 2;
+                bool maxLimitX = false;
+                bool minLimitX = false;
+
+                switch (resizeOption) {
+                case 0: { // Height
+                    if (character->height + delta >= 0.05f) {
+                        float newHalfHeight = (character->height/2 + delta);
+                        float bottomEdge = character->y - newHalfHeight;
+                        float topEdge = character->y + newHalfHeight;
+
+                        if (bottomEdge >= slideY - slideHeight/2 + 0.27f && topEdge <= slideY + slideHeight/2 - 0.08f) {
+                            character->height += delta;
+                        }
+                    }
+                    break;
+                }
+                case 1: // Width
+                    if (character->width + delta >= 0.05f) {
+                        float newHalfWidth = (character->width/2 + delta);
+                        float leftEdge = character->x - newHalfWidth;
+                        float rightEdge = character->x + newHalfWidth;
+
+                        if (leftEdge >= slideX - slideWidth / 2 - 0.08f && rightEdge <= slideX + slideWidth / 2 + 0.08f) {
+                            character->width += delta;
+                        }
+                    }
+                    break;
+                case 2: // X
+                    if (clickedPlus) {
+                        if (character->x + character->width / 2 + delta <= slideX + slideWidth / 2 + 0.08f) {
+                            character->x += delta;
+                        }
+                        break;
+                    }
+                    else {
+                        if (character->x - character->width / 2 + delta >= slideX - slideWidth / 2 - 0.08f) {
+                            character->x += delta;
+                        }
+                        break;
+                    }
+                case 3: // Y
+                    if (clickedPlus) {
+                        if (character->y + character->height / 2 + delta <= slideY + slideHeight / 2 - 0.08f) {
+                            character->y += delta;
+                        }
+                        break;
+                    }
+                    else {
+                        if (character->y - character->height / 2 + delta >= slideY - slideHeight / 2 + 0.27f) {
+                            character->y += delta;
+                        }
+                        break;
+                    }
+                }
+
+                std::cout << "Clicked on " << (clickedPlus ? "plus" : "minus") << " " << resizeOptions[i] << std::endl;
+                break;
+            }
+        }
+
+
         //for previous button
         //renderPreviousButton(0.64f, 0.75f, 0.08f, 0.1f);
 
@@ -189,13 +275,15 @@ void Menu::handleMouseClick(double mouseX, double mouseY, int windowWidth, int w
             std::cout << "Clicked on previous button" << std::endl;
             mainOption = -1;
         }
+
+
     }
     else if (mainOption == 1) {
         for (int i = 0; i < editOptions.size(); ++i) {
             float y = buttonYStart - i * spacing;
 
-            if (xNDC >= buttonX - halfWidth && xNDC <= buttonX + halfWidth &&
-                yNDC >= y - halfHeight && yNDC <= y + halfHeight) {
+            if (xNDC >= buttonX && xNDC <= buttonX + buttonWidth &&
+                yNDC >= y - buttonHeight && yNDC <= y + buttonHeight) {
                 std::cout << "Clicked on " << editOptions[i] << std::endl;
                 editOption = i;
                 break;
@@ -343,11 +431,19 @@ void Menu::renderImagesInLipsContainer(const std::string& folderPath) {
     }
 }
 
+void Menu::renderInputBox(float x, float y, float width, float height, float value) {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << value;
+    renderButton(x, y, width, height, ss.str(), "input");
+}
+
+
 void Menu::render(float x, float y, float width, float height, int windowWidth, int windowHeight) {
     renderMenuBackground();
 
     float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
     float buttonSpacing = 0.1f * aspectRatio;
+    float resizeButtonSpacing = 0.2f * aspectRatio;
     float buttonHeight = height * aspectRatio;
 
     if (mainOption == -1) {
@@ -359,7 +455,15 @@ void Menu::render(float x, float y, float width, float height, int windowWidth, 
 
     if (mainOption == 0) {
         renderPreviousButton(0.64f, 0.75f, 0.08f, 0.1f);
+        for (int i = 0; i < resizeOptions.size(); ++i) {
+            float yPos = y - 0.05 - i * resizeButtonSpacing;
+            renderButton(x, yPos, width, buttonHeight, resizeOptions[i], "resizeButtons");
+            renderButton(x, yPos - buttonHeight*2, width/2, buttonHeight, "minus", "resizeButtons");
+            renderButton(x + width/2, yPos - buttonHeight*2, width/2, buttonHeight, "plus", "resizeButtons");
+        }
+
     }
+
 
     if (mainOption == 1) {
         renderPreviousButton(0.64f, 0.75f, 0.08f, 0.1f);

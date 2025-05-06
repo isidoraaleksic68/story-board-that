@@ -185,8 +185,13 @@ void MainMenu::render(float x, float y, float width, float height, int windowWid
     }
 
     if (selectedCharacter != -1) {
-        avatar.drawCharacter(selectedCharacter, 0.0f, 0.2f, 0.5f, 0.5f);
+        std::vector<Avatar::Character>& characters = avatar.getCharacters();
+        menu.character = &characters[selectedCharacter];
+
         menu.render(0.7f, 0.7f, 0.22f, 0.04f, windowWidth, windowHeight);
+
+        avatar.drawCharacter(selectedCharacter, menu.character->x, menu.character->y,
+            menu.character->width, menu.character->height);
     }
 
     for (int i = 0; i < menuOptions.size(); ++i) {

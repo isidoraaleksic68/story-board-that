@@ -494,10 +494,17 @@ void Avatar::setupNewCharacter() {
     setupArms(character);
     setupLegs(character);
     character.name = "Isidora";
+    character.x = 0.0f;
+    character.y = 0.2f;
+    character.width = 0.5f;
+    character.height = 0.5f;
     characters.push_back(character);
     writeCharactersToJson(characters, "characters.json");
 }
 
+std::vector<Avatar::Character>& Avatar::getCharacters() {
+    return characters;
+}
 
 void Avatar::drawCharacter(int characterIndex, float x, float y, float width, float height) {
     if (characterIndex < 0 || characterIndex >= static_cast<int>(characters.size())) {
@@ -505,6 +512,8 @@ void Avatar::drawCharacter(int characterIndex, float x, float y, float width, fl
     }
 
     Character& character = characters[characterIndex];
+
+    //std::cout << height << std::endl;
 
     for (auto& part : character.bodyParts) {
         glBindVertexArray(part.VAO);
@@ -601,6 +610,10 @@ std::vector<Avatar::Character> Avatar::readCharactersFromJson(const std::string&
         for (const auto& characterJson : jsonData) {
             Character character;
             character.name = characterJson["name"];
+            character.x = characterJson["x"];
+            character.y = characterJson["y"];
+            character.width = characterJson["height"];
+            character.height = characterJson["width"];
             // Read each body part for the character
             for (const auto& bodyPartJson : characterJson["bodyParts"]) {
                 BodyPart bodyPart;
